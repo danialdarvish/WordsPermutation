@@ -1,21 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Permutation.Models;
-using System.Diagnostics;
 
 namespace Permutation.Controllers
 {
     public class HomeController : Controller
     {
         public static List<string> Words { get; set; }
-
         public List<string> PermutadedWords = new();
-
         public List<string> CorrectWords = new();
+
+        private readonly IStringLocalizer<HomeController> _localizer;
+
+        public HomeController(IStringLocalizer<HomeController> localizer)
+        {
+            _localizer = localizer;
+        }
 
         public IActionResult Index()
         {
             Words = System.IO.File.ReadAllLines(Dictionaries.Persian).ToList();
-
 
             return View();
         }

@@ -1,3 +1,5 @@
+@import 'header.css';
+
 @font-face {
     font-family: Vazir;
     src: url('font/Vazir.eot');
@@ -39,7 +41,7 @@ html {
 }
 
 body {
-  direction: rtl;
+  /*direction: rtl;*/
   margin-bottom: 60px;
   font-family: Vazir;
 }
