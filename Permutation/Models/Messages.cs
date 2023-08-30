@@ -2,6 +2,6 @@
 {
     public class Messages
     {
-        public const string WordRequierd = "لطفا کلمه مورد نظر را وارد کنید";
+        public const string WordRequired = "Please Enter letters.";
     }
 }

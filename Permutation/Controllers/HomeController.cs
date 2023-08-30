@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Permutation.Models;
 
 namespace Permutation.Controllers
@@ -10,17 +9,8 @@ namespace Permutation.Controllers
         public List<string> PermutadedWords = new();
         public List<string> CorrectWords = new();
 
-        private readonly IStringLocalizer<HomeController> _localizer;
-
-        public HomeController(IStringLocalizer<HomeController> localizer)
-        {
-            _localizer = localizer;
-        }
-
         public IActionResult Index()
         {
-            Words = System.IO.File.ReadAllLines(Dictionaries.Persian).ToList();
-
             return View();
         }
 
@@ -29,10 +19,12 @@ namespace Permutation.Controllers
         {
             if (!string.IsNullOrEmpty(permutation.Text))
             {
+                Words = System.IO.File.ReadAllLines(permutation.IsPersian ? Dictionaries.Persian : Dictionaries.English).ToList();
+
                 CorrectWords.Clear();
                 PermutadedWords.Clear();
 
-                PermutadedWords = PermutationGenerator.GeneratePermutationsWithRepetition(permutation.Text, permutation.Number);
+                PermutadedWords = PermutationGenerator.GeneratePermutationsWithRepetition(permutation.Text.ToLower(), permutation.Number);
                 CorrectWords = Words.Intersect(PermutadedWords).ToList();
 
                 return View(new PermutationDto
@@ -40,12 +32,25 @@ namespace Permutation.Controllers
                     Text = permutation.Text,
                     Number = permutation.Number,
                     AllCount = PermutadedWords.Count,
+                    IsPersian = permutation.IsPersian,
                     Words = CorrectWords
                 });
             }
 
-            TempData["ErrorMessage"] = Messages.WordRequierd;
+            TempData["ErrorMessage"] = Messages.WordRequired;
             return View(permutation);
+        }
+
+        [HttpGet]
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Contact()
+        {
+            return View();
         }
     }
 }

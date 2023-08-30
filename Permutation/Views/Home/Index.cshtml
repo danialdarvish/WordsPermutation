@@ -1,34 +1,103 @@
 ﻿@model PermutationDto
 @{
     ViewData["Title"] = "Permutation";
+    var persianSearch = "معنی کلمه {0}";
+    var englishSearch = "Meaning of {0}";
 }
 
-
-<form asp-controller="Home" asp-action="Index" method="post">
-    <input asp-for="Text" type="text" />
-    <input asp-for="Number" type="number" />
-    <button type="submit">Go</button>
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <p class="text-danger">@TempData["ErrorMessage"]</p>
-    }
+<form asp-action="Index" method="post" id="my-form">
+    <input type="hidden" value="" id="txt" asp-for="Text" />
+    <input type="hidden" value="" id="num" asp-for="Number" />
+    <input type="hidden" value="" id="dict" asp-for="IsPersian" />
 </form>
+@if (TempData["ErrorMessage"] != null)
+{
+    <p class="text-danger">@TempData["ErrorMessage"]</p>
+}
+<div class="input-row">
+    <input class="input-box"
+           type="text"
+           maxlength="1"
+           oninput="handleInput(this, 2)"
+           autofocus />
+    <input class="input-box"
+           type="text"
+           maxlength="1"
+           oninput="handleInput(this, 3)" />
+    <input class="input-box"
+           type="text"
+           maxlength="1"
+           oninput="handleInput(this, 4)" />
+    <button class="add-input" onclick="addNewInput()">+</button>
+</div>
+<div class="ctrl">
+    <div class="ctrl__button ctrl__button--decrement">&ndash;</div>
+    <div class="ctrl__counter">
+        <input class="ctrl__counter-input"
+               maxlength="10"
+               type="text"
+               value="0" />
+        <div class="ctrl__counter-num">0</div>
+    </div>
+    <div class="ctrl__button ctrl__button--increment">+</div>
+</div>
+<div class="button-row">
+    <select class="theme-select" id="my-select">
+        <option value="false">English</option>
+        <option value="true">Persian</option>
+    </select>
+    <button class="submit-button" onclick="handleAction()">Submit</button>
+</div>
 
-<br />
 @if (Model != null && !string.IsNullOrEmpty(Model.Text))
 {
-    <p>@Model.Words.Count کلمه از @Model.AllCount حالت موجود</p>
+    <p style="font-family: Vazir;">Selected letters: <strong>@string.Join(", ", Model.Text.ToCharArray())</strong></p>
+    <p>The length is <strong>@Model.Number</strong></p>
+    <p>@Model.Words.Count available words from all @Model.AllCount possible combinations according to our dictionary.</p>
 }
-<h1>کلمات: </h1>
-<br />
 @if (Model != null && Model.Words.Any())
 {
-    @foreach (var word in Model.Words)
-    {
-        <p>@word</p>
-    }
+    <div class="grid-container">
+        @foreach (var word in Model.Words)
+        {
+            var searchPhrase = Model.IsPersian ? string.Format(persianSearch, word) : string.Format(englishSearch, word);
+            <div class="grid-item" onclick="performGoogleSearch('@searchPhrase')">@word</div>
+        }
+    </div>
+
 }
 else
 {
-    <p>کلمه ای یافت نشد</p>
+    <p style="margin-top: 10px;" class="text text-warning">No words found.</p>
 }
+
+<script>
+    function handleAction() {
+        const inputRow = document.querySelector('.input-row');
+        const inputElements = inputRow.querySelectorAll('input');
+        let combinedValue = '';
+        inputElements.forEach((input) => {
+            combinedValue += input.value;
+        });
+        const divElement = document.querySelector('.ctrl__counter-num');
+        const n = divElement.textContent;
+        const selectElement = document.getElementById('my-select');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const selectedValue = selectedOption.value;
+        const hiddenInput1 = document.getElementById('txt');
+        const hiddenInput2 = document.getElementById('num');
+        const hiddenInput3 = document.getElementById('dict');
+        hiddenInput1.value = combinedValue;
+        hiddenInput2.value = n;
+        hiddenInput3.value = selectedValue;
+        const form = document.getElementById('my-form');
+        form.submit();
+    }
+
+    function performGoogleSearch(query) {
+        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+
+        // Open a new browser tab with the search URL
+        window.open(searchUrl, '_blank');
+    }
+</script>

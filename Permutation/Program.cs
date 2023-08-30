@@ -1,26 +1,10 @@
-using Microsoft.AspNetCore.Localization;
-using System.Globalization;
-
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 
-
-var supportedCultures = new[]
-        {
-            new CultureInfo("en"),
-            new CultureInfo("fa"),
-        };
-
-app.UseRequestLocalization(new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture("en"),
-    SupportedCultures = supportedCultures,
-    SupportedUICultures = supportedCultures
-});
 
 if (!app.Environment.IsDevelopment())
 {
