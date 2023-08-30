@@ -30,6 +30,7 @@
            oninput="handleInput(this, 4)" />
     <button class="add-input" onclick="addNewInput()">+</button>
 </div>
+<p>Enter the words length: </p>
 <div class="ctrl">
     <div class="ctrl__button ctrl__button--decrement">&ndash;</div>
     <div class="ctrl__counter">
@@ -55,20 +56,22 @@
     <p>The length is <strong>@Model.Number</strong></p>
     <p>@Model.Words.Count available words from all @Model.AllCount possible combinations according to our dictionary.</p>
 }
-@if (Model != null && Model.Words.Any())
+@if (Model != null)
 {
-    <div class="grid-container">
-        @foreach (var word in Model.Words)
-        {
-            var searchPhrase = Model.IsPersian ? string.Format(persianSearch, word) : string.Format(englishSearch, word);
-            <div class="grid-item" onclick="performGoogleSearch('@searchPhrase')">@word</div>
-        }
-    </div>
-
-}
-else
-{
-    <p style="margin-top: 10px;" class="text text-warning">No words found.</p>
+    @if (Model.Words.Any())
+    {
+        <div class="grid-container">
+            @foreach (var word in Model.Words)
+            {
+                var searchPhrase = Model.IsPersian ? string.Format(persianSearch, word) : string.Format(englishSearch, word);
+                <div class="grid-item" onclick="performGoogleSearch('@searchPhrase')">@word</div>
+            }
+        </div>
+    }
+    else
+    {
+        <p style="margin-top: 10px;" class="text text-warning">No words found.</p>
+    }
 }
 
 <script>

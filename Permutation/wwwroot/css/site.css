@@ -65,3 +65,7 @@ body {
 .ftco-navbar-light .navbar-brand {
     color: #FFC436;
 }
+
+    .ftco-navbar-light .navbar-brand:hover, .ftco-navbar-light .navbar-brand:focus {
+        color: #FFC436 !important;
+    }
